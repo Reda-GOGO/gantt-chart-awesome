@@ -1,8 +1,5 @@
-# React + Vite
+# Gantt Chart
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project provides a minimal setup for a gantt chart using React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[![Netlify Status](https://api.netlify.com/api/v1/badges/93344387-96b4-4946-90fe-307e649292fc/deploy-status)](https://app.netlify.com/sites/gantt-chart-awesome/deploys?branch=master)
