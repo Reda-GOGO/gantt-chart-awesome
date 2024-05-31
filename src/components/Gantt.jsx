@@ -6,7 +6,7 @@ function Gantt() {
     return (
         <>
             <div
-                className="flex flex-col w-full justify-center items-center p-6 bg-blue-400 max-[500px]:p-1"
+                className="flex flex-col min-h-screen w-full justify-center items-center p-6 bg-blue-400 max-[500px]:p-1"
             >
                 <Container />
                 <ControlPanel />

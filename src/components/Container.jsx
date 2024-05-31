@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
-import adjustSpilter from '../utils/adjustSpilter'
+import React, { useEffect, useRef } from 'react'
 import TaskTable from './TaskTable'
 import TaskChart from './TaskChart'
+import useAdjustPanel from '../hooks/useAdjustPanel'
 
 function Container() {
-  const [taskChartWidth, setTaskChartWidth] = useState(0)
   const taskContainer = useRef()
   const spilter = useRef()
   const taskTable = useRef()
@@ -12,18 +11,14 @@ function Container() {
   const phTaskChart = useRef()
   const taskChart = useRef()
 
-  useEffect(() => {
-    adjustSpilter(taskContainer.current,
-      spilter.current,
-      taskTable.current,
-      taskChart.current,
-      phTaskTable.current,
-      phTaskChart.current)
-      // if(taskChartWidth !=taskChart.current.offsetWidth){
-      //   setTaskChartWidth(taskChart.current.offsetWidth)
-      //   console.log(taskChart.current.offsetWidth)
-      // }
-  }, [])
+  useAdjustPanel(
+    taskContainer,
+    spilter,
+    taskTable,
+    taskChart,
+    phTaskTable,
+    phTaskChart
+  )
 
   return (
     <>
