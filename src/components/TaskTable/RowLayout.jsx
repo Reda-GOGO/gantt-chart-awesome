@@ -1,11 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react'
 import TitleCell from '../TableCells/TitleCell'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setexpandLines } from '../../libs/features/expandLinesSlice'
 import DateCell from '../TableCells/DateCell'
 import NumberCell from '../TableCells/NumberCell'
 function RowLayout({ task, relations, depth, expands, setExpands, expandBtn, setExpandBtn }) {
     const rows = useRef([])
     const widthCols = useSelector((state) => state.columnswidth.value)
+    const expandLines = useSelector((state)=>state.expandLines.value)
+    const dispatch = useDispatch()
+
     // const [bold,setBold] = useState()
     const [expandST, setExpandST] = useState(expands)
     useEffect(() => {
@@ -14,8 +18,9 @@ function RowLayout({ task, relations, depth, expands, setExpands, expandBtn, set
         })
         if (expands != expandST) {
             setExpandST(expands)
+            dispatch(setexpandLines(expands))
         }
-        if (expands[task.id]) {
+        if (expandLines[task.id]) {
             if (rows.current[task.id]) {
                 rows.current[task.id].style.display = 'none'
             }
@@ -25,7 +30,7 @@ function RowLayout({ task, relations, depth, expands, setExpands, expandBtn, set
             }
         }
 
-    }, [expands, expandBtn, rows, widthCols])
+    }, [expandLines, expandBtn, rows, widthCols])
     // border-b-[1px] border-gray-400
     return (
         <>
