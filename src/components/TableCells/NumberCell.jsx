@@ -39,7 +39,7 @@ function NumberCell({ number }) {
         return (
             <>
                 <input
-                    className=' whitespace-nowrap capitalize text-clip overflow-hidden text-sm '
+                    className='w-full whitespace-nowrap capitalize text-clip overflow-hidden text-sm '
                     onBlur={handleBlur}
                     onChange={handleNumber}
                     onKeyDown={handleKeypress}
