@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector} from 'react-redux';
 import { months } from '../../data/calendarData';
 import { getMonthsBetweenDates, getWeeksBetween } from '../../utils/calculateDate';
-import { setzoomType } from '../../libs/features/zoomtypeSlice';
 
 function TaskChartHeader({ setWidthCell, setTotalCell }) {
-    const dispatch = useDispatch();
     const zoomType = useSelector(state => state.zoomtype.value) || 'months';
     const tasks = useSelector(state => state.tasksdata.value);
     const panels = useSelector(state => state.panelsWidth);
