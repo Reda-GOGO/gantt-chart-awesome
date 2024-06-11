@@ -116,3 +116,29 @@ export function getMonthsBetweenDates(date1Str, date2Str) {
     }
     return months;
   }
+
+
+export function getDaysBetweenDates(start,end,actualStart,actualEnd){
+    const date1 = new Date(start);
+    const date2 = new Date(end);
+    const millisecondsInDay = 24 * 60 * 60 * 1000;
+
+    const startDay = new Date(actualStart.getTime() - (2 * millisecondsInDay));
+    const endDay = new Date(actualEnd);
+    const days = [];
+    const actualDays = [];
+    let currentStartDay = date1;
+    while(currentStartDay <= date2 ){
+        days.push(currentStartDay.getDate())
+        if(currentStartDay >= startDay && currentStartDay <= endDay){
+            actualDays.push(currentStartDay.toLocaleDateString());
+        }
+        currentStartDay.setDate(currentStartDay.getDate()+1);
+    }
+
+    return {
+        days,
+        totalDays : days.length,
+        actualDays,
+    }
+  }
