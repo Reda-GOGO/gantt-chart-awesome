@@ -5,6 +5,7 @@ import disableselectiontableReducer from './features/disableSelectionTableSlice.
 import zoomtypeReducer from './features/zoomtypeSlice.js'
 import panelsWidthReducer from './features/panelsWidthSlice.js'
 import expandLinesReducer from './features/expandLinesSlice.js'
+import scrollableLeftReducer from './features/scrollableLeftSlice.js'
 export const store = configureStore({
   reducer: {
     columnswidth : columnswidthReducer,
@@ -13,5 +14,6 @@ export const store = configureStore({
     zoomtype : zoomtypeReducer ,
     panelsWidth : panelsWidthReducer,
     expandLines : expandLinesReducer,
+    scrollableLeft  : scrollableLeftReducer,
   },
 })

@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react'
 import TaskTable from './TaskTable'
 import TaskChart from './TaskChart'
 import useAdjustPanel from '../hooks/useAdjustPanel'
+import { useDispatch } from 'react-redux'
+import { updateScrollLeft } from '../libs/features/scrollableLeftSlice'
 
 function Container() {
   const taskContainer = useRef()
@@ -10,7 +12,8 @@ function Container() {
   const phTaskTable = useRef()
   const phTaskChart = useRef()
   const taskChart = useRef()
-
+  const dispatch = useDispatch()
+  
   useAdjustPanel(
     taskContainer,
     spilter,
@@ -19,39 +22,43 @@ function Container() {
     phTaskTable,
     phTaskChart
   )
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      dispatch(updateScrollLeft(taskChart.current.scrollLeft))
+    }
+    
+    if (taskChart.current) {
+      taskChart.current.addEventListener('scroll', handleScroll)
+
+      // Cleanup function to remove the event listener
+      return () => {
+        taskChart.current.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [dispatch])
 
   return (
     <>
-
-      <div ref={taskContainer} className="relative  max-w-[1300px] w-full min-h-[600px] h-full bg-white ">
-        <div className="border flex flex-row border-solid border-gray-400 min-h-[600px] ">
-          <div ref={taskTable} className="w-[450px] min-h-[600px] flex flex-wrap overflow-auto ">
+      <div ref={taskContainer} className="relative max-w-[1300px] w-full min-h-[600px] h-full bg-white">
+        <div className="border flex flex-row border-solid border-gray-400 min-h-[600px]">
+          <div ref={taskTable} className="w-[450px] min-h-[600px] flex flex-wrap overflow-auto">
             <TaskTable />
           </div>
-          <div
-            ref={spilter}
-            className="divider w-[4px] cursor-e-resize">
+          <div ref={spilter} className="divider w-[4px] cursor-e-resize">
             <div className="w-[2px] h-full bg-gray-400"></div>
           </div>
-          <div
-            ref={taskChart}
-            className="w-[850px] min-h-[600px] flex flex-wrap overflow-auto">
+          <div ref={taskChart} className="w-[850px] min-h-[600px] flex flex-wrap overflow-auto">
             <TaskChart />
           </div>
         </div>
 
         <div className="absolute flex w-full top-1">
-          <div
-            ref={phTaskTable}
-            className=" flex flex-wrap overflow-auto"></div>
-          <div
-
-            className="divider w-[2px] cursor-e-resize">
+          <div ref={phTaskTable} className="flex flex-wrap overflow-auto"></div>
+          <div className="divider w-[2px] cursor-e-resize">
             <div className="w-[2px] h-full"></div>
           </div>
-          <div
-            ref={phTaskChart}
-            className=" flex flex-wrap overflow-auto"></div>
+          <div ref={phTaskChart} className="flex flex-wrap overflow-auto"></div>
         </div>
       </div>
     </>
