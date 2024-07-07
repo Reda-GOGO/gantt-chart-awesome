@@ -6,6 +6,10 @@ import zoomtypeReducer from './features/zoomtypeSlice.js'
 import panelsWidthReducer from './features/panelsWidthSlice.js'
 import expandLinesReducer from './features/expandLinesSlice.js'
 import scrollableLeftReducer from './features/scrollableLeftSlice.js'
+import widthCellReducer from './features/widthCellSlice.js'
+import totalCellReducer from './features/totalCellSlice.js'
+import leftCellReducer from './features/leftCellSlice.js'
+import currenttotalCellReducer from './features/currenttotalCellSlice.js'
 export const store = configureStore({
   reducer: {
     columnswidth : columnswidthReducer,
@@ -15,5 +19,9 @@ export const store = configureStore({
     panelsWidth : panelsWidthReducer,
     expandLines : expandLinesReducer,
     scrollableLeft  : scrollableLeftReducer,
+    widthCell : widthCellReducer,
+    leftCell : leftCellReducer,
+    totalCell : totalCellReducer,
+    currenttotalCell :currenttotalCellReducer,
   },
 })

@@ -1,14 +1,17 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { months, hours } from '../../data/calendarData';
 import { getMonthsBetweenDates, getWeeksBetween, getDaysBetweenDates } from '../../utils/calculateDate';
-
-function TaskChartHeader({ setWidthCell, setTotalCell, setcurrenttotal, setleftCell, setselectIndex }) {
+import { updateleftCell } from '../../libs/features/leftCellSlice';
+import { updateWidthCell } from '../../libs/features/widthCellSlice';
+import { updatecurrenttotalCell } from '../../libs/features/currenttotalCellSlice';
+import { updatetotalCell } from '../../libs/features/totalCellSlice';
+function TaskChartHeader() {
     const zoomType = useSelector(state => state.zoomtype.value) || 'months';
     const tasks = useSelector(state => state.tasksdata.value);
     const panels = useSelector(state => state.panelsWidth);
     const scrollableLeft = useSelector(state => state.scrollableLeft.value);
-    
+
     const timeline_area = useRef();
     const firstTimeline_value = useRef([]);
     const lastTimeline_value = useRef([]);
@@ -33,7 +36,7 @@ function TaskChartHeader({ setWidthCell, setTotalCell, setcurrenttotal, setleftC
     const [firstIndex, setFirstIndex] = useState(0);
     const [secondIndex, setSecondIndex] = useState(0);
     const [currenttotalCell, setCurrenttotalCell] = useState(0);
-
+    const dispatch = useDispatch()
     useEffect(() => {
         const calculateData = () => {
             const firstCellData = [];
@@ -91,6 +94,7 @@ function TaskChartHeader({ setWidthCell, setTotalCell, setcurrenttotal, setleftC
                     lastLeftIter += calculatedCellWidth;
                 }
                 if (weeksInfo.totalWeeks > 20) {
+                    newTotalCell = 20;
                     let temp = 0;
                     for (let index = 0; index < weeksInfo.totalMonths; index++) {
                         temp += (weeksInfo.Monthsinfo[index].days / 7) * calculatedCellWidth;
@@ -152,6 +156,7 @@ function TaskChartHeader({ setWidthCell, setTotalCell, setcurrenttotal, setleftC
                         secondCellData.push(item);
                     });
                 } else {
+                    newTotalCell = 21;
                     newfirstIndex = Math.floor(scrollableLeft / (80 * 7));
                     newsecondIndex = Math.floor(scrollableLeft / 80);
                     for (let index = 0; index < 21; index++) {
@@ -236,26 +241,24 @@ function TaskChartHeader({ setWidthCell, setTotalCell, setcurrenttotal, setleftC
             newsecondIndex,
             newTotalCell,
             newcurrenttotalCell,
-          } = calculateData();
-        
-          // Update state variables only if necessary
-          setselectIndex(prev => (prev !== newsecondIndex ? newsecondIndex : prev));
-          setCellWidth(prev => (prev !== calculatedCellWidth ? calculatedCellWidth : prev));
-          setWidthCell(prev => (prev !== calculatedCellWidth ? calculatedCellWidth : prev));
-          setcurrenttotal(prev => (prev !== newcurrenttotalCell ? newcurrenttotalCell : prev));
-          setFirstIndex(prev => (prev !== newfirstIndex ? newfirstIndex : prev));
-          setSecondIndex(prev => (prev !== newsecondIndex ? newsecondIndex : prev));
-          setTotalCell(prev => (prev !== newTotalCell ? newTotalCell : prev));
-        
-          // Update cell data only if the underlying data or displayed range has changed
-          setFirstCells(prev => (JSON.stringify(prev) !== JSON.stringify(firstCellData) ? firstCellData : prev));
-          setSecondCells(prev => (JSON.stringify(prev) !== JSON.stringify(secondCellData) ? secondCellData : prev));
-          setFirstLeft(prev => (JSON.stringify(prev) !== JSON.stringify(firstLefts) ? firstLefts : prev));
-          setLastLeft(prev => (JSON.stringify(prev) !== JSON.stringify(lastLefts) ? lastLefts : prev));
-          setleftCell(prev => (JSON.stringify(prev) !== JSON.stringify(lastLefts) ? lastLefts : prev));
-        }, [zoomType, panels, scrollableLeft, daysInfo]); // Only these dependencies are likely required
+        } = calculateData();
+
+        // Update state variables only if necessary
+        setCellWidth(prev => (prev !== calculatedCellWidth ? calculatedCellWidth : prev));
+        dispatch(updateWidthCell(calculatedCellWidth));
+        dispatch(updatecurrenttotalCell(newcurrenttotalCell));
+        setFirstIndex(prev => (prev !== newfirstIndex ? newfirstIndex : prev));
+        setSecondIndex(prev => (prev !== newsecondIndex ? newsecondIndex : prev));
+        dispatch(updatetotalCell(newTotalCell));
+        // Update cell data only if the underlying data or displayed range has changed
+        setFirstCells(prev => (JSON.stringify(prev) !== JSON.stringify(firstCellData) ? firstCellData : prev));
+        setSecondCells(prev => (JSON.stringify(prev) !== JSON.stringify(secondCellData) ? secondCellData : prev));
+        setFirstLeft(prev => (JSON.stringify(prev) !== JSON.stringify(firstLefts) ? firstLefts : prev));
+        setLastLeft(prev => (JSON.stringify(prev) !== JSON.stringify(lastLefts) ? lastLefts : prev));
+        dispatch(updateleftCell(lastLefts));
+    }, [zoomType, panels, scrollableLeft]); // Only these dependencies are likely required
+
     useEffect(() => {
-        setselectIndex(secondIndex);
         if (timeline_area.current) {
             const totalCells = currenttotalCell;
             timeline_area.current.style.minWidth = `${totalCells * cellWidth}px`;
