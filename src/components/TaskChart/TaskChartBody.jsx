@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { calculateDaysBetweenDates } from '../../utils/calculateDate';
-
+import defineRelation from '../../utils/defineRelation.js'
 function TaskChartBody() {
     const taskData = useSelector((state) => state.tasksdata.value);
     const expandLines = useSelector((state) => state.expandLines.value);
@@ -16,6 +16,7 @@ function TaskChartBody() {
     const millisecondsInDay = 24 * 60 * 60 * 1000;
     const startDate = new Date(taskData[0].start);
     const zoomType = useSelector(state => state.zoomtype.value) || 'months';
+    const relation = defineRelation(taskData);
     let start = new Date(taskData[0].start);
     start.setMonth(start.getMonth() - 1);
     start.setDate(1);
@@ -46,14 +47,14 @@ function TaskChartBody() {
         } else if (zoomType === 'days') {
             Ratio = 1;
             taskData.forEach((task) => {
-                XpositionArr.push((calculateDaysBetweenDates(firstWeeksIn, task.start))* Ratio);
+                XpositionArr.push((calculateDaysBetweenDates(firstWeeksIn, task.start)) * Ratio);
             });
         } else if (zoomType === 'hours') {
             Ratio = 24;
             taskData.forEach((task) => {
-                    XpositionArr.push(
-                        calculateDaysBetweenDates(firstDayIn, task.start) * Ratio
-                    );
+                XpositionArr.push(
+                    calculateDaysBetweenDates(firstDayIn, task.start) * Ratio
+                );
             });
         }
         return {
@@ -93,12 +94,27 @@ function TaskChartBody() {
                             })}
                             <div
                                 className="w-full flex justify-center items-center h-6 ">
-                                <div
+                                {
+                                    (task.duration != 0 )? (
+                                        <div
                                     style={{
                                         left: positionX.length > i && !isNaN(positionX[i]) ? positionX[i] * widthCell : 0,
-                                        width: task.duration * widthCell * widthRatio
+                                        width: task.duration * widthCell * widthRatio,
+                                        backgroundColor: relation[task.id].length == 0 ? '#3b82f6' : '#4ade80'
                                     }}
-                                    className="absolute h-4 bg-blue-500"></div>
+                                    className="absolute h-[18px] ">
+                                        
+                                </div>
+                                    ):(
+                                        <div 
+                                        style={{
+                                            left: positionX.length > i && !isNaN(positionX[i]) ? positionX[i] * widthCell : 0
+                                        }}
+                                        className="absolute w-4 h-4 bg-fuchsia-600 rotate-45">
+
+                                        </div>
+                                    )
+                                }
                             </div>
                         </div>
                     );
