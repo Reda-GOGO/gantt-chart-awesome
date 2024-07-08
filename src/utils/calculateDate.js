@@ -148,9 +148,13 @@ export function calculateDaysBetweenDates(start,end){
     const date2 = new Date(end);
     let currentDay = date1 ;
     let daysCount = 0 ;
-    while(currentDay <= date2){
-        daysCount++;
-        currentDay.setDate(currentDay.getDate()+1);
+    if(date1 - date2 == 0){
+        return 0 ;
+    }else{
+        while(currentDay < date2){
+            daysCount++;
+            currentDay.setDate(currentDay.getDate()+1);
+        }
+        return daysCount ;
     }
-    return daysCount ;
 }

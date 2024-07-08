@@ -46,18 +46,14 @@ function TaskChartBody() {
         } else if (zoomType === 'days') {
             Ratio = 1;
             taskData.forEach((task) => {
-                XpositionArr.push(calculateDaysBetweenDates(firstWeeksIn, task.start) * Ratio);
+                XpositionArr.push((calculateDaysBetweenDates(firstWeeksIn, task.start))* Ratio);
             });
         } else if (zoomType === 'hours') {
             Ratio = 24;
-            taskData.forEach((task,i) => {
-                if(i === 0){
-                    XpositionArr.push(calculateDaysBetweenDates(0));  
-                }else{
+            taskData.forEach((task) => {
                     XpositionArr.push(
-                        calculateDaysBetweenDates(firstDayIn.setDate(firstDayIn.getDate()), task.start) * Ratio
+                        calculateDaysBetweenDates(firstDayIn, task.start) * Ratio
                     );
-                }
             });
         }
         return {
@@ -100,7 +96,7 @@ function TaskChartBody() {
                                 <div
                                     style={{
                                         left: positionX.length > i && !isNaN(positionX[i]) ? positionX[i] * widthCell : 0,
-                                        width: i == 0 ? (task.duration + 1) * widthCell * widthRatio: task.duration * widthCell * widthRatio
+                                        width: task.duration * widthCell * widthRatio
                                     }}
                                     className="absolute h-4 bg-blue-500"></div>
                             </div>
