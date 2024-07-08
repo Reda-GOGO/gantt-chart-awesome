@@ -142,3 +142,15 @@ export function getDaysBetweenDates(start,end,actualStart,actualEnd){
         actualDays,
     }
   }
+
+export function calculateDaysBetweenDates(start,end){
+    const date1 = new Date(start);
+    const date2 = new Date(end);
+    let currentDay = date1 ;
+    let daysCount = 0 ;
+    while(currentDay < date2){
+        daysCount++;
+        currentDay.setDate(currentDay.getDate()+1);
+    }
+    return daysCount ;
+}

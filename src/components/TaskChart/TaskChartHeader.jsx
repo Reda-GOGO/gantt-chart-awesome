@@ -36,7 +36,7 @@ function TaskChartHeader() {
     const [firstIndex, setFirstIndex] = useState(0);
     const [secondIndex, setSecondIndex] = useState(0);
     const [currenttotalCell, setCurrenttotalCell] = useState(0);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     useEffect(() => {
         const calculateData = () => {
             const firstCellData = [];
@@ -247,6 +247,7 @@ function TaskChartHeader() {
         setCellWidth(prev => (prev !== calculatedCellWidth ? calculatedCellWidth : prev));
         dispatch(updateWidthCell(calculatedCellWidth));
         dispatch(updatecurrenttotalCell(newcurrenttotalCell));
+        setCurrenttotalCell(newcurrenttotalCell);
         setFirstIndex(prev => (prev !== newfirstIndex ? newfirstIndex : prev));
         setSecondIndex(prev => (prev !== newsecondIndex ? newsecondIndex : prev));
         dispatch(updatetotalCell(newTotalCell));
@@ -282,13 +283,19 @@ function TaskChartHeader() {
         <div ref={timeline_area} className="relative w-full h-20 flex flex-col">
             <div className="relative flex w-full h-10">
                 {firstCells.map((item, i) => (
-                    <div
+                    i === firstCells.length - 1 ? (<div
+                        ref={el => (firstTimeline_value.current[i] = el)}
+                        key={i}
+                        className="absolute font-extralight h-full text-sm border-gray-400 flex justify-center items-center"
+                    >
+                        {item.itemDate}
+                    </div>) : (<div
                         ref={el => (firstTimeline_value.current[i] = el)}
                         key={i}
                         className="absolute font-extralight h-full text-sm border-r-[1px] border-gray-400 flex justify-center items-center"
                     >
                         {item.itemDate}
-                    </div>
+                    </div>)
                 ))}
             </div>
             <div className="relative flex w-full h-10">

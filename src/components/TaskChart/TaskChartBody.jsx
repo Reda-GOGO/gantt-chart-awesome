@@ -1,43 +1,110 @@
-import { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { calculateDaysBetweenDates } from '../../utils/calculateDate';
 
 function TaskChartBody() {
-    const taskData = useSelector((state) => state.tasksdata.value)
-    const expandLines = useSelector((state) => state.expandLines.value)
+    const taskData = useSelector((state) => state.tasksdata.value);
+    const expandLines = useSelector((state) => state.expandLines.value);
     const scrollableLeft = useSelector(state => state.scrollableLeft.value);
-    const [selectIndex, setselectIndex] = useState(0);
+    const [selectIndex, setSelectIndex] = useState(0);
     const widthCell = useSelector((state) => state.widthCell.value);
     const totalCell = useSelector((state) => state.totalCell.value);
-    const currenttotal = useSelector((state) => state.currenttotalCell.value);
+    const currentTotal = useSelector((state) => state.currenttotalCell.value);
     const leftCell = useSelector((state) => state.leftCell.value);
+    const [positionX, setPositionX] = useState([]);
+    const [widthRatio, setWidthRatio] = useState(0);
+    const millisecondsInDay = 24 * 60 * 60 * 1000;
+    const startDate = new Date(taskData[0].start);
+    const zoomType = useSelector(state => state.zoomtype.value) || 'months';
+    let start = new Date(taskData[0].start);
+    start.setMonth(start.getMonth() - 1);
+    start.setDate(1);
+
+    const firstMonthsIn = start;
+    const startDay = startDate.getDay();
+    let firstWeeksIn;
+    if (startDay <= 0) {
+        firstWeeksIn = new Date(startDate.getTime() - (((6 - startDay)) * millisecondsInDay));
+    } else {
+        firstWeeksIn = new Date(startDate.getTime() - (((startDay - 1)) * millisecondsInDay));
+    }
+
+    const calculateCoordinates = () => {
+        let Ratio = 0;
+        let XpositionArr = [];
+        let firstDayIn = new Date(taskData[0].start);
+        if (zoomType === 'months') {
+            Ratio = 12 / 365;
+            taskData.forEach((task) => {
+                XpositionArr.push(calculateDaysBetweenDates(firstMonthsIn, task.start) * Ratio);
+            });
+        } else if (zoomType === 'weeks') {
+            Ratio = 1 / 7;
+            taskData.forEach((task) => {
+                XpositionArr.push(calculateDaysBetweenDates(firstWeeksIn, task.start) * Ratio);
+            });
+        } else if (zoomType === 'days') {
+            Ratio = 1;
+            taskData.forEach((task) => {
+                XpositionArr.push(calculateDaysBetweenDates(firstWeeksIn, task.start) * Ratio);
+            });
+        } else if (zoomType === 'hours') {
+            Ratio = 24;
+            taskData.forEach((task) => {
+                XpositionArr.push(
+                    calculateDaysBetweenDates(firstDayIn.setDate(firstDayIn.getDate() - 1), task.start) * Ratio
+                );
+            });
+        }
+        return {
+            Ratio,
+            XpositionArr
+        };
+    };
+
     useEffect(() => {
-        setselectIndex(Math.floor(scrollableLeft / widthCell))
-    }, [scrollableLeft, widthCell])
+        let result = calculateCoordinates();
+        setWidthRatio(result.Ratio);
+        setPositionX(result.XpositionArr);
+    }, [zoomType]);
+
+    useEffect(() => {
+        setSelectIndex(Math.floor(scrollableLeft / widthCell));
+    }, [scrollableLeft, widthCell]);
+
     return (
         <>
             {
-                taskData.map((task) => {
+                taskData.map((task, i) => {
                     return (
                         <div key={task.id}
-                            style={{ minWidth: widthCell * currenttotal, display: !expandLines[task.id] ? 'flex' : 'none' }}
-                            className="relative flex w-full h-6 border-b-[1px] border-gray-300 ">
+                            style={{ minWidth: widthCell * currentTotal, display: !expandLines[task.id] ? 'flex' : 'none' }}
+                            className="relative flex w-full h-6 border-b-[1px] border-gray-300">
                             {Array(totalCell).fill(0).map((_, i) => {
                                 if (i + selectIndex < leftCell.length) {
                                     return (
-                                        <div key={i} className="absolute h-full border-r-[1px] border-gray-300 "
+                                        <div key={i} className="absolute h-full border-r-[1px] border-gray-300"
                                             style={{ width: widthCell, left: leftCell[i + selectIndex] }}>
-
                                         </div>
-                                    )
+                                    );
                                 }
-                            })
-                            }
+                                return null;
+                            })}
+                            <div
+                                className="w-full flex justify-center items-center h-6 ">
+                                <div
+                                    style={{
+                                        left: positionX.length > i && !isNaN(positionX[i]) ? positionX[i] * widthCell : 0,
+                                        width: task.duration * widthCell * widthRatio
+                                    }}
+                                    className="absolute h-4 bg-blue-500"></div>
+                            </div>
                         </div>
-                    )
+                    );
                 })
             }
         </>
-    )
+    );
 }
 
-export default TaskChartBody
+export default TaskChartBody;
