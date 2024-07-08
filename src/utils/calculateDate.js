@@ -123,7 +123,7 @@ export function getDaysBetweenDates(start,end,actualStart,actualEnd){
     const date2 = new Date(end);
     const millisecondsInDay = 24 * 60 * 60 * 1000;
 
-    const startDay = new Date(actualStart.getTime() - (2 * millisecondsInDay));
+    const startDay = new Date(actualStart.getTime() - (1 * millisecondsInDay));
     const endDay = new Date(actualEnd);
     const days = [];
     const actualDays = [];
@@ -148,7 +148,7 @@ export function calculateDaysBetweenDates(start,end){
     const date2 = new Date(end);
     let currentDay = date1 ;
     let daysCount = 0 ;
-    while(currentDay < date2){
+    while(currentDay <= date2){
         daysCount++;
         currentDay.setDate(currentDay.getDate()+1);
     }

@@ -33,7 +33,7 @@ function TaskChartBody() {
         let Ratio = 0;
         let XpositionArr = [];
         let firstDayIn = new Date(taskData[0].start);
-        if (zoomType === 'months') {
+        if (zoomType === 'months' || zoomType === 'years') {
             Ratio = 12 / 365;
             taskData.forEach((task) => {
                 XpositionArr.push(calculateDaysBetweenDates(firstMonthsIn, task.start) * Ratio);
@@ -50,10 +50,14 @@ function TaskChartBody() {
             });
         } else if (zoomType === 'hours') {
             Ratio = 24;
-            taskData.forEach((task) => {
-                XpositionArr.push(
-                    calculateDaysBetweenDates(firstDayIn.setDate(firstDayIn.getDate() - 1), task.start) * Ratio
-                );
+            taskData.forEach((task,i) => {
+                if(i === 0){
+                    XpositionArr.push(calculateDaysBetweenDates(0));  
+                }else{
+                    XpositionArr.push(
+                        calculateDaysBetweenDates(firstDayIn.setDate(firstDayIn.getDate()), task.start) * Ratio
+                    );
+                }
             });
         }
         return {
@@ -61,6 +65,7 @@ function TaskChartBody() {
             XpositionArr
         };
     };
+
 
     useEffect(() => {
         let result = calculateCoordinates();
@@ -95,7 +100,7 @@ function TaskChartBody() {
                                 <div
                                     style={{
                                         left: positionX.length > i && !isNaN(positionX[i]) ? positionX[i] * widthCell : 0,
-                                        width: task.duration * widthCell * widthRatio
+                                        width: i == 0 ? (task.duration + 1) * widthCell * widthRatio: task.duration * widthCell * widthRatio
                                     }}
                                     className="absolute h-4 bg-blue-500"></div>
                             </div>
