@@ -286,13 +286,13 @@ function TaskChartHeader() {
                     i === firstCells.length - 1 ? (<div
                         ref={el => (firstTimeline_value.current[i] = el)}
                         key={i}
-                        className="absolute font-extralight h-full text-sm border-gray-400 flex justify-center items-center"
+                        className="absolute select-none font-extralight h-full text-sm border-gray-400 flex justify-center items-center"
                     >
                         {item.itemDate}
                     </div>) : (<div
                         ref={el => (firstTimeline_value.current[i] = el)}
                         key={i}
-                        className="absolute font-extralight h-full text-sm border-r-[1px] border-gray-400 flex justify-center items-center"
+                        className="absolute select-none font-extralight h-full text-sm border-r-[1px] border-gray-400 flex justify-center items-center"
                     >
                         {item.itemDate}
                     </div>)
@@ -303,7 +303,7 @@ function TaskChartHeader() {
                     <div
                         ref={el => (lastTimeline_value.current[i] = el)}
                         key={i}
-                        className="absolute font-extralight h-full text-sm border-b-[1px] border-t-[1px] border-r-[1px] border-gray-400 flex justify-center items-center"
+                        className="absolute select-none font-extralight h-full text-sm border-b-[1px] border-t-[1px] border-r-[1px] border-gray-400 flex justify-center items-center"
                     >
                         {item}
                     </div>

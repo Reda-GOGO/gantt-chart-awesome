@@ -80,9 +80,9 @@ export function getMonthsBetweenDates(date1Str, date2Str) {
     const dates = [];  // Array to store year-month objects
   
     // Create Date objects for date1 and date2
-    const date1 = new Date(date1Str);
+    let date1 = new Date(date1Str);
     date1.setMonth(date1.getMonth() - 1)
-    const date2 = new Date(date2Str);
+    let date2 = new Date(date2Str);
   
     // Ensure date1 is before date2 for clarity (optional)
     if (date1 > date2) {
