@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { throttle } from 'lodash';
 import { calculateDaysBetweenDates } from '../../utils/calculateDate';
 import defineRelation from '../../utils/defineRelation.js'
 function TaskChartBody() {
@@ -88,7 +87,7 @@ function TaskChartBody() {
         setSelectIndex(Math.floor(scrollableLeft / widthCell));
     }, [scrollableLeft, widthCell]);
 
-    const drawLine = throttle((event, id, direction) => {
+    const drawLine = (event, id, direction) => {
         if (!detectLeftButton(event)) return;
         const initialPosition = { x: event.clientX, y: event.clientY };
         const initposX = TaskWrapper.current[id].getBoundingClientRect().left;
@@ -143,7 +142,7 @@ function TaskChartBody() {
         document.body.addEventListener('mousemove', onMouseMove);
         document.body.addEventListener('mouseup', onMouseUp);
 
-    },16);
+    }
 
     return (
         <>

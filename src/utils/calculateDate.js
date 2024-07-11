@@ -1,7 +1,7 @@
 export function getWeeksBetween(start, end) {
     // Ensure startDate is before endDate
-    const startDate = new Date(start);
-    const endDate = new Date(end);
+    let startDate = new Date(start);
+    let endDate = new Date(end);
     if (startDate > endDate) {
         [startDate, endDate] = [endDate, startDate];
     }
