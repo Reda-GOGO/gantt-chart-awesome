@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { calculateDaysBetweenDates } from '../../utils/calculateDate';
+import { settaskCoordinates } from '../../libs/features/taskCoordinatesSlice.js'
+import { addlink } from '../../libs/features/linksDataSlice.js';
 import defineRelation from '../../utils/defineRelation.js'
 function TaskChartBody() {
     const taskData = useSelector((state) => state.tasksdata.value);
@@ -22,6 +24,7 @@ function TaskChartBody() {
     const RightlineWrapperRef = useRef([]);
     const rightlineRef = useRef([]);
     const TaskWrapper = useRef([]);
+    const dispatch = useDispatch();
     let start = new Date(taskData[0].start);
     start.setMonth(start.getMonth() - 1);
     start.setDate(1);
@@ -81,6 +84,7 @@ function TaskChartBody() {
         let result = calculateCoordinates();
         setWidthRatio(result.Ratio);
         setPositionX(result.XpositionArr);
+        dispatch(settaskCoordinates(result));
     }, [zoomType]);
 
     useEffect(() => {
@@ -92,9 +96,21 @@ function TaskChartBody() {
         const initialPosition = { x: event.clientX, y: event.clientY };
         const initposX = TaskWrapper.current[id].getBoundingClientRect().left;
         const initposY = TaskWrapper.current[id].getBoundingClientRect().top;
+        let actualLink = {
+            source: {
+                position: '', index: -1
+            },
+            destionation: {
+                position: '', index: -1
+            }
+        }
+        actualLink.source.position = direction === 'left' ? 'start' : 'end';
+        actualLink.source.index = id+1;
+
         const onMouseMove = ((e) => {
-            if (e.target.getBoundingClientRect().y >= TaskWrapper.current[taskData[0].id].getBoundingClientRect().y
-                && e.target.getBoundingClientRect().y <= TaskWrapper.current[taskData[taskData.length - 1].id].getBoundingClientRect().y
+
+            if (e.target.getBoundingClientRect().y >= TaskWrapper.current[0].getBoundingClientRect().y
+                && e.target.getBoundingClientRect().y <= TaskWrapper.current[taskData.length - 1].getBoundingClientRect().y
             ) {
                 if (!LeftlineWraperRef.current || !rightlineRef.current) return;
 
@@ -122,6 +138,18 @@ function TaskChartBody() {
                 lineWrapperRef.current[id].style.display = 'flex';
                 lineWrapperRef.current[id].style.transform = `rotate(${angle * (180 / Math.PI)}deg)`;
                 lineRef.current[id].style.width = `${width - 8}px`;
+                LeftlineWraperRef.current.map((item, i) => {
+                    item.onmouseup = () => {
+                        actualLink.destionation.position = 'start';
+                        actualLink.destionation.index = i+1;
+                    }
+                })
+                RightlineWrapperRef.current.map((item, i) => {
+                    item.onmouseup = () => {
+                        actualLink.destionation.position = 'end';
+                        actualLink.destionation.index = i+1;
+                    }
+                })
             }
         });
 
@@ -138,6 +166,9 @@ function TaskChartBody() {
 
             document.body.removeEventListener('mousemove', onMouseMove);
             document.body.removeEventListener('mouseup', onMouseUp);
+            if(actualLink.source.position !== actualLink.destionation.position && actualLink.destionation.position !== ''){
+                dispatch(addlink(actualLink));
+            }
         };
         document.body.addEventListener('mousemove', onMouseMove);
         document.body.addEventListener('mouseup', onMouseUp);
@@ -163,8 +194,8 @@ function TaskChartBody() {
                                 return null;
                             })}
                             <div
-                                ref={el => TaskWrapper.current[task.id] = el}
-                                className="w-full flex justify-center items-center h-6 ">
+                                ref={el => TaskWrapper.current[i] = el}
+                                className="z-[100] w-full flex justify-center items-center h-6 ">
                                 {
                                     (task.duration != 0) ? (
                                         <div
@@ -175,21 +206,21 @@ function TaskChartBody() {
                                             }}
                                             className="group absolute h-[18px] flex items-center">
                                             <div
-                                                onMouseDown={(event) => drawLine(event, task.id, 'left')}
-                                                ref={el => LeftlineWraperRef.current[task.id] = el}
-                                                className="absolute group-hover:flex hidden items-center  bg-gray-400 w-3 h-3 rounded-full left-[-12px]">
+                                                onMouseDown={(event) => drawLine(event, i, 'left')}
+                                                ref={el => LeftlineWraperRef.current[i] = el}
+                                                className="hover:bg-amber-500 absolute group-hover:flex hidden items-center  bg-gray-400 w-3 h-3 rounded-full left-[-12px]">
                                                 <div
-                                                    ref={el => leftlineRef.current[task.id] = el}
-                                                    className="z-50 h-[2px] top-[6px] left-[6px] absolute transition duration-100 ease-in-out  bg-amber-400 "></div>
+                                                    ref={el => leftlineRef.current[i] = el}
+                                                    className="z-50 border-dashed border-[1px] border-amber-400 h-[0px] top-[6px] left-[6px] absolute transition duration-100 ease-in-out "></div>
                                             </div>
                                             <div
-                                                onMouseDown={(event) => drawLine(event, task.id, 'right')}
-                                                ref={el => RightlineWrapperRef.current[task.id] = el}
-                                                className="absolute group-hover:flex hidden items-center bg-gray-400 w-3 h-3 rounded-full right-[-12px]">
+                                                onMouseDown={(event) => drawLine(event, i, 'right')}
+                                                ref={el => RightlineWrapperRef.current[i] = el}
+                                                className="hover:bg-amber-500 absolute group-hover:flex hidden items-center bg-gray-400 w-3 h-3 rounded-full right-[-12px]">
                                                 <div
-                                                    ref={el => rightlineRef.current[task.id] = el}
+                                                    ref={el => rightlineRef.current[i] = el}
                                                     style={{ width: '0px' }}
-                                                    className="z-50 h-[2px] left-[6px] absolute transition duration-100 ease-in-out bg-amber-400">
+                                                    className="z-50 border-dashed border-[1px] border-amber-400 h-[0px] left-[6px] absolute transition duration-100 ease-in-out">
 
                                                 </div>
                                             </div>
@@ -202,22 +233,22 @@ function TaskChartBody() {
                                             className="group absolute w-4 h-4 flex bg-fuchsia-600 rotate-45">
                                             <div className="group absolute -rotate-45 w-4 h-4">
                                                 <div
-                                                    onMouseDown={(event) => drawLine(event, task.id, 'left')}
-                                                    ref={el => LeftlineWraperRef.current[task.id] = el}
-                                                    className="absolute group-hover:flex hidden items-center  bg-gray-400 w-3 h-3 rounded-full left-[-12px]">
+                                                    onMouseDown={(event) => drawLine(event, i, 'left')}
+                                                    ref={el => LeftlineWraperRef.current[i] = el}
+                                                    className="hover:bg-amber-500 absolute group-hover:flex hidden items-center  bg-gray-400 w-3 h-3 rounded-full left-[-12px]">
                                                     <div
-                                                        ref={el => leftlineRef.current[task.id] = el}
+                                                        ref={el => leftlineRef.current[i] = el}
                                                         style={{ width: '0px' }}
-                                                        className="h-[2px] top-[6px] left-[6px] absolute transition duration-100 ease-in-out  bg-amber-400 "></div>
+                                                        className="border-dotted border-[1px] border-amber-400 h-[0px] top-[6px] left-[6px] absolute transition duration-100 ease-in-out "></div>
                                                 </div>
                                                 <div
-                                                    onMouseDown={(event) => drawLine(event, task.id, 'right')}
-                                                    ref={el => RightlineWrapperRef.current[task.id] = el}
-                                                    className="absolute group-hover:flex hidden items-center bg-gray-400 w-3 h-3 rounded-full right-[-12px]">
+                                                    onMouseDown={(event) => drawLine(event, i, 'right')}
+                                                    ref={el => RightlineWrapperRef.current[i] = el}
+                                                    className="hover:bg-amber-500 absolute group-hover:flex hidden items-center bg-gray-400 w-3 h-3 rounded-full right-[-12px]">
                                                     <div
-                                                        ref={el => rightlineRef.current[task.id] = el}
+                                                        ref={el => rightlineRef.current[i] = el}
                                                         style={{ width: '0px' }}
-                                                        className="h-[2px] top-[6px] left-[6px] absolute transition duration-100 ease-in-out bg-amber-400">
+                                                        className="border-dotted border-[1px] border-amber-400 h-[0px] top-[6px] left-[6px] absolute transition duration-100 ease-in-out ">
 
                                                     </div>
                                                 </div>

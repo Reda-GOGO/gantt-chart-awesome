@@ -10,6 +10,8 @@ import widthCellReducer from './features/widthCellSlice.js'
 import totalCellReducer from './features/totalCellSlice.js'
 import leftCellReducer from './features/leftCellSlice.js'
 import currenttotalCellReducer from './features/currenttotalCellSlice.js'
+import taskCoordinatesReducer from './features/taskCoordinatesSlice.js'
+import linksDataReducer from './features/linksDataSlice.js'
 export const store = configureStore({
   reducer: {
     columnswidth : columnswidthReducer,
@@ -23,5 +25,7 @@ export const store = configureStore({
     leftCell : leftCellReducer,
     totalCell : totalCellReducer,
     currenttotalCell :currenttotalCellReducer,
+    taskCoordinates : taskCoordinatesReducer,
+    linksData : linksDataReducer,
   },
 })
