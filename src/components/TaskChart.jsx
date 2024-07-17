@@ -1,12 +1,14 @@
 import TaskChartHeader from './TaskChart/TaskChartHeader'
 import TaskChartBody from './TaskChart/TaskChartBody'
 import { useSelector } from 'react-redux';
+// import { useEffect } from 'react';
 
 function TaskChart() {
   const widthCell = useSelector((state) => state.widthCell.value);
   const taskCoordinates = useSelector((state) => state.taskCoordinates.value);
   const taskData = useSelector((state) => state.tasksdata.value);
   const listLinks = useSelector((state) => state.linksData.value);
+  const expandLines = useSelector((state) => state.expandLines.value);
   const calculateTwoDimension = (link) => {
     let dx = 0;
     let dy = 0;
@@ -75,7 +77,9 @@ function TaskChart() {
 
   }
 
-
+  // useEffect(()=>{
+  //   console.log(expandLines)
+  // },[listLinks,taskCoordinates,expandLines])
   return (
     <>
       <div className="z-50 w-full h-full relative flex flex-col flex-nowrap ">

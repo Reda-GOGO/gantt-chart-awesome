@@ -110,7 +110,7 @@ function TaskChartBody() {
         const onMouseMove = ((e) => {
 
             if (e.target.getBoundingClientRect().y >= TaskWrapper.current[0].getBoundingClientRect().y
-                && e.target.getBoundingClientRect().y <= TaskWrapper.current[taskData.length - 1].getBoundingClientRect().y
+                && e.target.getBoundingClientRect().y <= TaskWrapper.current[0].getBoundingClientRect().y + (taskData.length * 24)
             ) {
                 if (!LeftlineWraperRef.current || !rightlineRef.current) return;
 
@@ -139,15 +139,19 @@ function TaskChartBody() {
                 lineWrapperRef.current[id].style.transform = `rotate(${angle * (180 / Math.PI)}deg)`;
                 lineRef.current[id].style.width = `${width - 8}px`;
                 LeftlineWraperRef.current.map((item, i) => {
-                    item.onmouseup = () => {
-                        actualLink.destionation.position = 'start';
-                        actualLink.destionation.index = i+1;
+                    if(item){
+                        item.onmouseup = () => {
+                            actualLink.destionation.position = 'start';
+                            actualLink.destionation.index = i+1;
+                        }
                     }
                 })
                 RightlineWrapperRef.current.map((item, i) => {
-                    item.onmouseup = () => {
-                        actualLink.destionation.position = 'end';
-                        actualLink.destionation.index = i+1;
+                    if(item){
+                        item.onmouseup = () => {
+                            actualLink.destionation.position = 'end';
+                            actualLink.destionation.index = i+1;
+                        }
                     }
                 })
             }
