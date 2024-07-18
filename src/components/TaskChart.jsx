@@ -1,7 +1,7 @@
 import TaskChartHeader from './TaskChart/TaskChartHeader'
 import TaskChartBody from './TaskChart/TaskChartBody'
 import { useSelector } from 'react-redux';
-// import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function TaskChart() {
   const widthCell = useSelector((state) => state.widthCell.value);
@@ -9,6 +9,8 @@ function TaskChart() {
   const taskData = useSelector((state) => state.tasksdata.value);
   const listLinks = useSelector((state) => state.linksData.value);
   const expandLines = useSelector((state) => state.expandLines.value);
+  const [filteredListLinks , setFilteredListLinks] = useState([]);
+  const linkWrapper = useRef();
   const calculateTwoDimension = (link) => {
     let dx = 0;
     let dy = 0;
@@ -17,7 +19,13 @@ function TaskChart() {
     let InitTop = 0;
     let InitLeft = 0;
     let TypeLink = '';
-    dy = (Math.abs(link.destionation.index - link.source.index) * 24);
+    if (taskCoordinates.YpositionArr
+      && !isNaN(taskCoordinates.YpositionArr[link.source.index - 1])
+      && !isNaN(taskCoordinates.YpositionArr[link.destionation.index - 1])
+    ){
+      InitTop = Math.abs((taskCoordinates.YpositionArr[0] - taskCoordinates.YpositionArr[link.source.index - 1] ) - 10);
+      dy = (Math.abs(taskCoordinates.YpositionArr[link.destionation.index - 1] - taskCoordinates.YpositionArr[link.source.index - 1]));
+    }
     Ydiff = (link.source.index - link.destionation.index) * 24;
     if (taskCoordinates.XpositionArr
       && !isNaN(taskCoordinates.XpositionArr[link.source.index - 1])
@@ -69,7 +77,6 @@ function TaskChart() {
           }
         }
       }
-      InitTop = (link.source.index * 24) - 14;
     }
     return {
       TypeLink, Xdiff, Ydiff, dx, dy, InitTop, InitLeft
@@ -77,9 +84,15 @@ function TaskChart() {
 
   }
 
-  // useEffect(()=>{
-  //   console.log(expandLines)
-  // },[listLinks,taskCoordinates,expandLines])
+  useEffect(()=>{
+    let lists = [] ;
+    listLinks.map((link)=>{
+      if(expandLines[link.destionation.index] !== true && expandLines[link.source.index] !== true){
+        lists.push(link)
+      }
+    })
+    setFilteredListLinks(lists);
+  },[listLinks,taskCoordinates,expandLines])
   return (
     <>
       <div className="z-50 w-full h-full relative flex flex-col flex-nowrap ">
@@ -88,9 +101,9 @@ function TaskChart() {
         <TaskChartBody
         />
         {/* here is the links area  */}
-        <div className="z-0 top-20 absolute w-full ">
+        <div ref={linkWrapper} className="z-0 top-20 absolute w-full ">
           {
-            listLinks.map((link, i) => {
+            filteredListLinks.map((link, i) => {
               if (calculateTwoDimension(link).TypeLink === 'EndStartUpDown') {
                 return <LinkEndStartUpDown key={i} linkData={calculateTwoDimension(link)} />
               } else if (calculateTwoDimension(link).TypeLink === 'EndStartUpUp') {

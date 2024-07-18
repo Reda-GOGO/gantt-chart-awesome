@@ -14,6 +14,7 @@ function TaskChartBody() {
     const currentTotal = useSelector((state) => state.currenttotalCell.value);
     const leftCell = useSelector((state) => state.leftCell.value);
     const [positionX, setPositionX] = useState([]);
+    const [positionY, setPositionY] = useState([]);
     const [widthRatio, setWidthRatio] = useState(0);
     const millisecondsInDay = 24 * 60 * 60 * 1000;
     const startDate = new Date(taskData[0].start);
@@ -41,6 +42,14 @@ function TaskChartBody() {
     const calculateCoordinates = () => {
         let Ratio = 0;
         let XpositionArr = [];
+        let YpositionArr = [];
+        if(TaskWrapper.current){
+            TaskWrapper.current.map((item)=>{
+                if(item){
+                    YpositionArr.push(item.getBoundingClientRect().top);
+                }
+            })
+        }
         let firstDayIn = new Date(taskData[0].start);
         if (zoomType === 'months' || zoomType === 'years') {
             Ratio = 12 / 365;
@@ -67,7 +76,8 @@ function TaskChartBody() {
         }
         return {
             Ratio,
-            XpositionArr
+            XpositionArr,
+            YpositionArr
         };
     };
     function detectLeftButton(evt) {
@@ -84,8 +94,9 @@ function TaskChartBody() {
         let result = calculateCoordinates();
         setWidthRatio(result.Ratio);
         setPositionX(result.XpositionArr);
+        setPositionY(result.YpositionArr);
         dispatch(settaskCoordinates(result));
-    }, [zoomType]);
+    }, [zoomType,taskData,expandLines,TaskWrapper]);
 
     useEffect(() => {
         setSelectIndex(Math.floor(scrollableLeft / widthCell));
