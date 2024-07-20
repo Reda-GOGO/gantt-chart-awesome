@@ -31,13 +31,17 @@ function TaskTableHeader({ setSelectedCol, setDeltaX }) {
           delta = e.clientX - md.event.clientX
 
           setSelectedCol(i)
-          setDeltaX(delta)
+          if (widthCols[i] + delta > 5) {
+            setDeltaX(delta)
+          }
         }
         document.onmouseup = () => {
           document.onmouseup = ''
           document.onmousemove = ''
           dispatch(disable())
-          dispatch(updateOne({ indexCol: i, widthCol: delta }))
+          if(delta != undefined){
+            dispatch(updateOne({ indexCol: i, widthCol: delta }))
+          }
           setSelectedCol(-1)
         }
       }
@@ -53,33 +57,33 @@ function TaskTableHeader({ setSelectedCol, setDeltaX }) {
       <div className="relative w-full h-20 flex flex-row border-b-[1px] border-gray-400">
 
         {task_titles.map((_, i) => {
-        
-            if (task_titles[i + 1] != undefined) {
-              if (task_titles[i + 1] == 'duration hour') {
-                return (
-                  <div ref={el => { tableHeaders.current[i] = el }} key={i} className="h-full flex flex-col justify-center items-center whitespace-nowrap text-clip overflow-hidden text-sm">
-                    <span className="text-sm text-gray-700 font-light capitalize ">
-                      Duration
-                    </span>
-                    <span className="text-sm text-gray-700 font-light ">(hours)</span>
-                  </div>
-                )
-              } else {
-                return (
-                  <div ref={el => { tableHeaders.current[i] = el }} key={i} className='h-full flex justify-center items-center whitespace-nowrap text-clip overflow-hidden text-sm'>
-                    <span className="text-sm text-gray-700 font-light capitalize">{task_titles[i + 1]}</span>
-                  </div>)
-              }
-            } else {
+
+          if (task_titles[i + 1] != undefined) {
+            if (task_titles[i + 1] == 'duration hour') {
               return (
-                <div ref={el => { tableHeaders.current[i] = el }} key={i} className="h-full flex justify-center items-center ">
-                  <span className="text-sm font-light capitalize">
-                    <Add />
+                <div ref={el => { tableHeaders.current[i] = el }} key={i} className="h-full flex flex-col justify-center items-center whitespace-nowrap text-clip overflow-hidden text-sm">
+                  <span className="select-none text-sm text-gray-700 font-light capitalize ">
+                    Duration
                   </span>
+                  <span className="select-none text-sm text-gray-700 font-light ">(hours)</span>
                 </div>
               )
+            } else {
+              return (
+                <div ref={el => { tableHeaders.current[i] = el }} key={i} className='h-full flex justify-center items-center whitespace-nowrap text-clip overflow-hidden text-sm'>
+                  <span className="select-none text-sm text-gray-700 font-light capitalize">{task_titles[i + 1]}</span>
+                </div>)
             }
-          
+          } else {
+            return (
+              <div ref={el => { tableHeaders.current[i] = el }} key={i} className="h-full flex justify-center items-center ">
+                <span className="select-none text-sm font-light capitalize">
+                  <Add />
+                </span>
+              </div>
+            )
+          }
+
         })}
 
 

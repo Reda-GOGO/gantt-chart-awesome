@@ -35,8 +35,10 @@ function TaskChartBody() {
     let firstWeeksIn;
     if (startDay <= 0) {
         firstWeeksIn = new Date(startDate.getTime() - (((6 - startDay)) * millisecondsInDay));
+        firstWeeksIn.setDate(firstWeeksIn.getDate()-7);
     } else {
         firstWeeksIn = new Date(startDate.getTime() - (((startDay - 1)) * millisecondsInDay));
+        firstWeeksIn.setDate(firstWeeksIn.getDate()-7);
     }
 
     const calculateCoordinates = () => {
@@ -70,7 +72,7 @@ function TaskChartBody() {
             Ratio = 24;
             taskData.forEach((task) => {
                 XpositionArr.push(
-                    calculateDaysBetweenDates(firstDayIn, task.start) * Ratio
+                    calculateDaysBetweenDates(firstDayIn, task.start) * Ratio +1
                 );
             });
         }
@@ -88,7 +90,6 @@ function TaskChartBody() {
         var button = evt.which || evt.button;
         return button == 1;
     }
-
 
     useEffect(() => {
         let result = calculateCoordinates();

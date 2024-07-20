@@ -9,7 +9,13 @@ export const columnswidthSlice = createSlice({
   initialState,
   reducers: {
     updateOne:(state,actions)=>{
-      state.value[actions.payload.indexCol] += actions.payload.widthCol
+      if(actions.payload){
+        if(state.value[actions.payload.indexCol] + actions.payload.widthCol >= 40){
+          state.value[actions.payload.indexCol] += actions.payload.widthCol;
+        }else{
+          state.value[actions.payload.indexCol] = 40;
+        }
+      }
     },
 
   },

@@ -16,8 +16,10 @@ export function getWeeksBetween(start, end) {
     let adjustedStartDate;
     if (startDay <= 0) {
         adjustedStartDate = new Date(startDate.getTime() - (((6 - startDay)) * millisecondsInDay));
+        adjustedStartDate.setDate(adjustedStartDate.getDate()-7);
     } else {
         adjustedStartDate = new Date(startDate.getTime() - (((startDay - 1)) * millisecondsInDay));
+        adjustedStartDate.setDate(adjustedStartDate.getDate()-7);
 
     }
 
@@ -25,8 +27,12 @@ export function getWeeksBetween(start, end) {
     let adjustedEndDate;
     if (endDay > 0) {
         adjustedEndDate = new Date(endDate.getTime() + ((8 - endDay) * millisecondsInDay));
+        adjustedEndDate.setDate(adjustedEndDate.getDate()+7);
+    
     } else {
         adjustedEndDate = new Date(endDate.getTime() + ((endDay + 1) * millisecondsInDay));
+        adjustedEndDate.setDate(adjustedEndDate.getDate()+7);
+    
     }
 
     // Calculate the difference in days between adjusted dates
@@ -135,6 +141,7 @@ export function getDaysBetweenDates(start,end,actualStart,actualEnd){
         }
         currentStartDay.setDate(currentStartDay.getDate()+1);
     }
+    // actualDays.push(endDay.setDate(endDay.getDate()+1).toLocaleString())
 
     return {
         days,
