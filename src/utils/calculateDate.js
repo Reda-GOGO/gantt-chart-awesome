@@ -89,6 +89,7 @@ export function getMonthsBetweenDates(date1Str, date2Str) {
     let date1 = new Date(date1Str);
     date1.setMonth(date1.getMonth() - 1)
     let date2 = new Date(date2Str);
+    date2.setMonth(date2.getMonth() + 1)
   
     // Ensure date1 is before date2 for clarity (optional)
     if (date1 > date2) {
