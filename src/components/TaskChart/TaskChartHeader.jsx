@@ -280,7 +280,7 @@ function TaskChartHeader() {
         setFirstLeft(prev => (JSON.stringify(prev) !== JSON.stringify(firstLefts) ? firstLefts : prev));
         setLastLeft(prev => (JSON.stringify(prev) !== JSON.stringify(lastLefts) ? lastLefts : prev));
         dispatch(updateleftCell(lastLefts));
-    }, [zoomType, panels, scrollableLeft]); // Only these dependencies are likely required
+    }, [zoomType, panels, scrollableLeft,tasks]); // Only these dependencies are likely required
 
     useEffect(() => {
         if (timeline_area.current) {
