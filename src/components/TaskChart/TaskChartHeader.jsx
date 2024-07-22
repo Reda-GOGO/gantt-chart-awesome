@@ -76,6 +76,30 @@ function TaskChartHeader() {
                             secondCellData.push(months[mth - 1]);
                         });
                     });
+                } else {
+                    newsecondIndex = Math.floor(scrollableLeft / 80);
+                    newTotalCell = 20;
+                    let temp = 0;
+                    for (let index = 0; index < monthInfo.totalYear; index++) {
+                        temp += (monthInfo.dates[index].month.length) * calculatedCellWidth;
+                        if (scrollableLeft - temp < 0) {
+                            newfirstIndex = index;
+                            break;
+                        }
+                    }
+                    for (let index = 0; index < 3; index++) {
+                        if (index + newfirstIndex < monthInfo.totalYear) {
+                            firstCellData.push({
+                                itemDate: monthInfo.dates[index + newfirstIndex].year,
+                                TotalIn: monthInfo.dates[index + newfirstIndex].month.length
+                            });
+                        }
+                    }
+                    for (let i = 0; i < 36; i++) {
+                        if (i + newsecondIndex < monthInfo.totalMonth) {
+                            secondCellData.push(months[monthInfo.allMonths[i + newsecondIndex] - 1]);
+                        }
+                    }
                 }
             } else if (zoomType === 'weeks') {
                 totalCells = weeksInfo.totalWeeks;

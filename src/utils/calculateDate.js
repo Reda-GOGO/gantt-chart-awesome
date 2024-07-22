@@ -84,7 +84,7 @@ export function getWeeksBetween(start, end) {
 
 export function getMonthsBetweenDates(date1Str, date2Str) {
     const dates = [];  // Array to store year-month objects
-  
+    let allMonths = [];
     // Create Date objects for date1 and date2
     let date1 = new Date(date1Str);
     date1.setMonth(date1.getMonth() - 1)
@@ -101,6 +101,7 @@ export function getMonthsBetweenDates(date1Str, date2Str) {
       const startMonth = year === date1.getFullYear() ? date1.getMonth() : 0;
       const endMonth = year === date2.getFullYear() ? date2.getMonth() : 11;
         totalMonth += createMonthArray(startMonth,endMonth).length;
+        createMonthArray(startMonth,endMonth).map((mth)=>allMonths.push(mth));
       // Create an object for the current year and its months
       dates.push({ year, month: createMonthArray(startMonth, endMonth) });
     
@@ -108,6 +109,7 @@ export function getMonthsBetweenDates(date1Str, date2Str) {
   
     return {
         dates,
+        allMonths,
         totalMonth,
         totalYear : dates.length
     };
@@ -141,7 +143,6 @@ export function getDaysBetweenDates(start,end,actualStart,actualEnd){
         }
         currentStartDay.setDate(currentStartDay.getDate()+1);
     }
-    // actualDays.push(endDay.setDate(endDay.getDate()+1).toLocaleString())
 
     return {
         days,
