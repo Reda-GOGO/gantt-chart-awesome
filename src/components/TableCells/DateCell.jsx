@@ -1,14 +1,18 @@
-import React , {useState} from 'react'
-
-function DateCell({ start_date }) {
+import React , {useState,useEffect} from 'react'
+import {setStart} from '../../libs/features/tasksdataSlice' 
+import { useDispatch,useSelector } from 'react-redux'
+function DateCell({task, start_date }) {
     const [writeMode, setWritemode] = useState(false)
     const [date, setDate] = useState(start_date)
+    const tasks = useSelector((state) => state.tasksdata.value)
+
+    const dispatch = useDispatch()
     const handleWritemode = () => {
-        // console.log(date)
         setWritemode(true)
     }
     const handleKeypress = (e) => {
         if (e.keyCode === 13 && e.target.value) {
+            dispatch(setStart({taskId :task.id,newStartValue : date }))
             setWritemode(false)
         }
     }
@@ -16,6 +20,7 @@ function DateCell({ start_date }) {
         setDate(e.target.value)
     }
     const handleBlur = (e) => {
+        dispatch(setStart({taskId :task.id,newStartValue : date }))
         setWritemode(false)
     }
     const handleKeyup = (e)=>{
@@ -23,6 +28,9 @@ function DateCell({ start_date }) {
             setWritemode(true)
         }
     }
+    useEffect(()=>{
+        setDate(start_date)
+    },[tasks])
     if (!writeMode) {
         return (
             <>

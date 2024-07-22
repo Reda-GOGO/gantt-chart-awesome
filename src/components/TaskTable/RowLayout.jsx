@@ -54,17 +54,17 @@ function RowLayout({ task, relations, depth, expands, setExpands, expandBtn, set
                 <div
                     style={relations[task.id].length != 0 ? { fontWeight: 600 } : { fontWeight: 400 }}
                     className="h-full z-10 flex justify-center items-center  whitespace-nowrap text-clip overflow-hidden text-sm ">
-                    <DateCell start_date={task.start} />
+                    <DateCell task={task} start_date={task.start} />
                 </div>
                 <div
                     style={relations[task.id].length != 0 ? { fontWeight: 600 } : { fontWeight: 400 }}
                     className="h-full flex justify-center items-center  whitespace-nowrap text-clip overflow-hidden text-sm ">
-                    <NumberCell number={task.duration} />
+                    <NumberCell task={task} isDurationinH={false}  number={task.duration} />
                 </div>
                 <div
                     style={relations[task.id].length != 0 ? { fontWeight: 600 } : { fontWeight: 400 }}
                     className="h-full flex justify-center items-center  whitespace-nowrap text-clip overflow-hidden text-sm ">
-                    <NumberCell number={task.duration_hour} />
+                    <NumberCell task={task} isDurationinH={true}  number={task.duration_hour} />
                 </div>
                 <div className="h-full "></div>
                 <div className="h-full "></div>

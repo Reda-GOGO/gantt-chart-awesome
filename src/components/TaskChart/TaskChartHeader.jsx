@@ -17,11 +17,10 @@ function TaskChartHeader() {
     const lastTimeline_value = useRef([]);
 
     const lastDate = useMemo(() => {
-        const date = new Date(tasks[tasks.length - 1].start);
-        date.setDate(date.getDate() + tasks[tasks.length - 1].duration);
+        const date = new Date(tasks[0].start);
+        date.setDate(date.getDate() + tasks[0].duration);
         return date;
     }, [tasks]);
-
     const firstDate = useMemo(() => new Date(tasks[0].start), [tasks]);
 
     const weeksInfo = useMemo(() => getWeeksBetween(firstDate, lastDate), [firstDate, lastDate]);

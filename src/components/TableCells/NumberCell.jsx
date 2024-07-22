@@ -1,14 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
+import {setDuration,setDurationInHour} from '../../libs/features/tasksdataSlice' 
+import { useDispatch,useSelector } from 'react-redux'
 
-function NumberCell({ number }) {
+function NumberCell({task,isDurationinH, number }) {
     const [writeMode, setWritemode] = useState(false)
     const [num, setnum] = useState(number.toString())
+    const tasks = useSelector((state) => state.tasksdata.value)
+    const dispatch = useDispatch()
     const handleWritemode = () => {
-        // console.log(num)
         setWritemode(true)
     }
     const handleKeypress = (e) => {
         if (e.keyCode === 13 && e.target.value) {
+            if(isDurationinH){
+                dispatch(setDurationInHour({taskId :task.id,newDurationInHValue : num }))
+            }else{
+                dispatch(setDuration({taskId :task.id,newDurationValue : num }))
+            }
             setWritemode(false)
         }
     }
@@ -21,8 +29,16 @@ function NumberCell({ number }) {
         setnum(e.target.value)
     }
     const handleBlur = (e) => {
+        if(isDurationinH){
+            dispatch(setDurationInHour({taskId :task.id,newDurationInHValue : num }))
+        }else{
+            dispatch(setDuration({taskId :task.id,newDurationValue : num }))
+        }
         setWritemode(false)
     }
+    useEffect(()=>{
+        setnum(number)
+    },[tasks])
     if (!writeMode) {
         return (
             <>

@@ -1,16 +1,20 @@
-import { useState } from 'react'
-
+import { useState,useEffect } from 'react'
+import {setName} from '../../libs/features/tasksdataSlice' 
+import { useDispatch,useSelector } from 'react-redux'
 import TaskIcon from '../TaskTable/TaskIcon'
 import dfsOrder from '../../utils/dfsOrder'
 function TitleCell({ task, relations, depth, expands, setExpands, expandBtn, setExpandBtn }) {
     const [writeMode, setWritemode] = useState(false)
     const [title, setTitle] = useState(task.task_name)
     const arr = Array(depth[task.id] - 1).fill(0)
+    const tasks = useSelector((state) => state.tasksdata.value)
+    const dispatch = useDispatch()
     const handleWritemode = () => {
         setWritemode(true)
     }
     const handleKeypress = (e)=>{
         if(e.keyCode === 13 && e.target.value){
+            dispatch(setName({taskId :task.id,newTasknameValue : title }))
             setWritemode(false)
         }
     }
@@ -18,6 +22,7 @@ function TitleCell({ task, relations, depth, expands, setExpands, expandBtn, set
         setTitle(e.target.value)
     }
     const handleBlur = (e)=>{
+        dispatch(setName({taskId :task.id,newTasknameValue : title }))
         setWritemode(false)
     }
     const handleKeyup = (e)=>{
@@ -57,7 +62,9 @@ function TitleCell({ task, relations, depth, expands, setExpands, expandBtn, set
 
     }
 
-
+    useEffect(()=>{
+        setTitle(title)
+    },[task])
     return (
         <>
             <div 
