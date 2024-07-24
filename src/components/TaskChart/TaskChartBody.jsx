@@ -90,7 +90,63 @@ function TaskChartBody() {
         var button = evt.which || evt.button;
         return button == 1;
     }
-
+    const CalculateCriticalPath = ()=>{
+        function parseDate(dateStr) {
+            return new Date(dateStr);
+        }
+        let childTasks = taskData.filter((task)=>relation[task.id].length == 0);
+        childTasks.sort((a, b) => parseDate(a.start) - parseDate(b.start));
+        let firstChild = childTasks[0] ;
+        let maxEndDate = new Date(firstChild.start);
+        let tempDate = [] ;
+        childTasks.forEach(child => {
+          const childEndDate = new Date(parseDate(child.start));
+          childEndDate.setDate(childEndDate.getDate() + Math.floor(child.duration));
+          childEndDate.setHours(childEndDate.getHours() + (child.duration % 1) * 24);
+          tempDate.push({
+            diff :Number(childEndDate - maxEndDate),
+            taskId : child.id
+          }) ;
+        });
+        tempDate.sort((a,b)=> b.diff-a.diff)
+        return tempDate[0]
+    }
+    function findAdjacentTasks(taskId, taskData) {
+        // Helper function to find a task by its id
+        function findTaskById(id) {
+            return taskData.find(task => task.id === id);
+        }
+    
+        // Helper function to get all predecessors recursively
+        function getAllPredecessors(taskId, visited) {
+            if (visited.has(taskId)) return [];
+            visited.add(taskId);
+    
+            const task = findTaskById(taskId);
+            if (!task || task.Predecessors.includes(-1)) return [];
+    
+            let predecessors = [];
+            for (let predId of task.Predecessors) {
+                if (predId !== -1) {
+                    predecessors.push(predId);
+                    predecessors = predecessors.concat(getAllPredecessors(predId, visited));
+                }
+            }
+    
+            return predecessors;
+        }
+    
+        // Use a set to avoid duplicate task ids
+        const visited = new Set();
+        const adjacentTasks = getAllPredecessors(taskId, visited);
+    
+        // Remove the initial taskId from the result if it exists
+        const index = adjacentTasks.indexOf(taskId);
+        if (index > -1) adjacentTasks.splice(index, 1);
+        let res = Array.from(new Set(adjacentTasks));
+        res.push(taskId);
+        return res; // Remove duplicates and convert back to array
+    }
     useEffect(() => {
         let result = calculateCoordinates();
         setWidthRatio(result.Ratio);
@@ -218,7 +274,7 @@ function TaskChartBody() {
                                             style={{
                                                 left: positionX.length > i && !isNaN(positionX[i]) ? positionX[i] * widthCell : 0,
                                                 width: task.duration * widthCell * widthRatio,
-                                                backgroundColor: relation[task.id].length == 0 ? '#3b82f6' : '#4ade80'
+                                                backgroundColor: findAdjacentTasks(CalculateCriticalPath().taskId,taskData).includes(task.id)? '#e11d48': relation[task.id].length == 0 ? '#3b82f6' : '#4ade80'
                                             }}
                                             className="group absolute h-[18px] flex items-center">
                                             <div

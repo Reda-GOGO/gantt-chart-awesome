@@ -9,7 +9,7 @@ function TaskChart() {
   const taskData = useSelector((state) => state.tasksdata.value);
   const listLinks = useSelector((state) => state.linksData.value);
   const expandLines = useSelector((state) => state.expandLines.value);
-  const [filteredListLinks , setFilteredListLinks] = useState([]);
+  const [filteredListLinks, setFilteredListLinks] = useState([]);
   const linkWrapper = useRef();
   const calculateTwoDimension = (link) => {
     let dx = 0;
@@ -22,8 +22,8 @@ function TaskChart() {
     if (taskCoordinates.YpositionArr
       && !isNaN(taskCoordinates.YpositionArr[link.source.index - 1])
       && !isNaN(taskCoordinates.YpositionArr[link.destionation.index - 1])
-    ){
-      InitTop = Math.abs((taskCoordinates.YpositionArr[0] - taskCoordinates.YpositionArr[link.source.index - 1] ) - 10);
+    ) {
+      InitTop = Math.abs((taskCoordinates.YpositionArr[0] - taskCoordinates.YpositionArr[link.source.index - 1]) - 10);
       dy = (Math.abs(taskCoordinates.YpositionArr[link.destionation.index - 1] - taskCoordinates.YpositionArr[link.source.index - 1]));
     }
     Ydiff = (link.source.index - link.destionation.index) * 24;
@@ -32,47 +32,96 @@ function TaskChart() {
       && !isNaN(taskCoordinates.XpositionArr[link.destionation.index - 1])
     ) {
       if (link.source.position === 'end' && link.destionation.position === 'start') {
-        if (taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell <= (taskCoordinates.XpositionArr[link.source.index - 1] + taskCoordinates.Ratio * taskData[link.source.index - 1].duration) * widthCell + 4) {
-          dx = Math.abs(taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] + taskCoordinates.Ratio * taskData[link.source.index - 1].duration) * widthCell);
-          Xdiff = taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] + taskCoordinates.Ratio * taskData[link.source.index - 1].duration) * widthCell;
+        if (taskData[link.source.index - 1].duration === 0) {
+          if (taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell <= (taskCoordinates.XpositionArr[link.source.index - 1] ) * widthCell-  16 + 4) {
+            dx = Math.abs(taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1]) * widthCell -  16);
+            Xdiff = taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] ) * widthCell -  16;
 
-          InitLeft = (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell) + (taskCoordinates.Ratio * taskData[link.source.index - 1].duration * widthCell)
-          if (link.source.index < link.destionation.index) {
-            TypeLink = 'EndStartDownDown';
+            InitLeft = (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell) + ( 16)
+            if (link.source.index < link.destionation.index) {
+              TypeLink = 'EndStartDownDown';
+            } else {
+              TypeLink = 'EndStartDownUp';
+            }
           } else {
-            TypeLink = 'EndStartDownUp';
+            dx = Math.abs(taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] ) * widthCell+  16);
+            Xdiff = taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] ) * widthCell+  16;
+            InitLeft = (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell) + ( 16 )
+            if (link.source.index < link.destionation.index) {
+              TypeLink = 'EndStartUpDown';
+            } else {
+              TypeLink = 'EndStartUpUp';
+            }
           }
         } else {
-          dx = Math.abs(taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] + taskCoordinates.Ratio * taskData[link.source.index - 1].duration) * widthCell);
-          Xdiff = taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] + taskCoordinates.Ratio * taskData[link.source.index - 1].duration) * widthCell;
-          InitLeft = (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell) + (taskCoordinates.Ratio * taskData[link.source.index - 1].duration * widthCell)
-          if (link.source.index < link.destionation.index) {
-            TypeLink = 'EndStartUpDown';
+          if (taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell <= (taskCoordinates.XpositionArr[link.source.index - 1] + taskCoordinates.Ratio * taskData[link.source.index - 1].duration) * widthCell + 4) {
+            dx = Math.abs(taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] + taskCoordinates.Ratio * taskData[link.source.index - 1].duration) * widthCell);
+            Xdiff = taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] + taskCoordinates.Ratio * taskData[link.source.index - 1].duration) * widthCell;
+
+            InitLeft = (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell) + (taskCoordinates.Ratio * taskData[link.source.index - 1].duration * widthCell)
+            if (link.source.index < link.destionation.index) {
+              TypeLink = 'EndStartDownDown';
+            } else {
+              TypeLink = 'EndStartDownUp';
+            }
           } else {
-            TypeLink = 'EndStartUpUp';
+            dx = Math.abs(taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] + taskCoordinates.Ratio * taskData[link.source.index - 1].duration) * widthCell);
+            Xdiff = taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell - (taskCoordinates.XpositionArr[link.source.index - 1] + taskCoordinates.Ratio * taskData[link.source.index - 1].duration) * widthCell;
+            InitLeft = (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell) + (taskCoordinates.Ratio * taskData[link.source.index - 1].duration * widthCell)
+            if (link.source.index < link.destionation.index) {
+              TypeLink = 'EndStartUpDown';
+            } else {
+              TypeLink = 'EndStartUpUp';
+            }
           }
         }
       } else {
-        if ((taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * taskData[link.destionation.index - 1].duration * widthCell) >= (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell) + 4) {
-          dx = Math.abs((taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * taskData[link.destionation.index - 1].duration * widthCell) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell));
-          Xdiff = (taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * taskData[link.destionation.index - 1].duration * widthCell) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell);
-          InitLeft = taskCoordinates.XpositionArr[link.source.index - 1] * widthCell
-          if (link.source.index < link.destionation.index) {
-            TypeLink = 'StartEndUpDown';
+        if (taskData[link.destionation.index - 1].duration === 0) {
+          if ((taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + 16 ) >= (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell) + 4) {
+            dx = Math.abs((taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell +  16 ) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell));
+            Xdiff = (taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * 16 * widthCell) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell);
+            InitLeft = taskCoordinates.XpositionArr[link.source.index - 1] * widthCell
+            if (link.source.index < link.destionation.index) {
+              TypeLink = 'StartEndUpDown';
+            } else {
+              TypeLink = 'StartEndUpUp';
+            }
           } else {
-            TypeLink = 'StartEndUpUp';
+            dx = Math.abs((taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell +  16) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell));
+            Xdiff = (taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + 16 ) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell);
+            InitLeft = taskCoordinates.XpositionArr[link.source.index - 1] * widthCell
+            if (link.source.index < link.destionation.index) {
+              TypeLink = 'StartEndDownDown';
+            } else {
+              if (dx < 4) {
+                TypeLink = 'StartEndUpUp';
+              } else {
+                TypeLink = 'StartEndDownUp';
+              }
+            }
           }
         } else {
-          dx = Math.abs((taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * taskData[link.destionation.index - 1].duration * widthCell) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell));
-          Xdiff = (taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * taskData[link.destionation.index - 1].duration * widthCell) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell);
-          InitLeft = taskCoordinates.XpositionArr[link.source.index - 1] * widthCell
-          if (link.source.index < link.destionation.index) {
-            TypeLink = 'StartEndDownDown';
-          } else {
-            if (dx < 4) {
-              TypeLink = 'StartEndUpUp';
+          if ((taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * taskData[link.destionation.index - 1].duration * widthCell) >= (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell) + 4) {
+            dx = Math.abs((taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * taskData[link.destionation.index - 1].duration * widthCell) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell));
+            Xdiff = (taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * taskData[link.destionation.index - 1].duration * widthCell) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell);
+            InitLeft = taskCoordinates.XpositionArr[link.source.index - 1] * widthCell
+            if (link.source.index < link.destionation.index) {
+              TypeLink = 'StartEndUpDown';
             } else {
-              TypeLink = 'StartEndDownUp';
+              TypeLink = 'StartEndUpUp';
+            }
+          } else {
+            dx = Math.abs((taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * taskData[link.destionation.index - 1].duration * widthCell) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell));
+            Xdiff = (taskCoordinates.XpositionArr[link.destionation.index - 1] * widthCell + taskCoordinates.Ratio * taskData[link.destionation.index - 1].duration * widthCell) - (taskCoordinates.XpositionArr[link.source.index - 1] * widthCell);
+            InitLeft = taskCoordinates.XpositionArr[link.source.index - 1] * widthCell
+            if (link.source.index < link.destionation.index) {
+              TypeLink = 'StartEndDownDown';
+            } else {
+              if (dx < 4) {
+                TypeLink = 'StartEndUpUp';
+              } else {
+                TypeLink = 'StartEndDownUp';
+              }
             }
           }
         }
@@ -84,15 +133,15 @@ function TaskChart() {
 
   }
 
-  useEffect(()=>{
-    let lists = [] ;
-    listLinks.map((link)=>{
-      if(expandLines[link.destionation.index] !== true && expandLines[link.source.index] !== true){
+  useEffect(() => {
+    let lists = [];
+    listLinks.map((link) => {
+      if (expandLines[link.destionation.index] !== true && expandLines[link.source.index] !== true) {
         lists.push(link)
       }
     })
     setFilteredListLinks(lists);
-  },[listLinks,taskCoordinates,expandLines])
+  }, [listLinks, taskCoordinates, expandLines])
   return (
     <>
       <div className="z-50 w-full h-full relative flex flex-col flex-nowrap ">
