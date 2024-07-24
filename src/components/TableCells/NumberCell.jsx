@@ -13,9 +13,9 @@ function NumberCell({task,isDurationinH, number }) {
     const handleKeypress = (e) => {
         if (e.keyCode === 13 && e.target.value) {
             if(isDurationinH){
-                dispatch(setDurationInHour({taskId :task.id,newDurationInHValue : num }))
+                dispatch(setDurationInHour({taskId :task.id,newDurationInHValue : Number(num) }))
             }else{
-                dispatch(setDuration({taskId :task.id,newDurationValue : num }))
+                dispatch(setDuration({taskId :task.id,newDurationValue :Number(num) }))
             }
             setWritemode(false)
         }
@@ -30,9 +30,9 @@ function NumberCell({task,isDurationinH, number }) {
     }
     const handleBlur = (e) => {
         if(isDurationinH){
-            dispatch(setDurationInHour({taskId :task.id,newDurationInHValue : num }))
+            dispatch(setDurationInHour({taskId :task.id,newDurationInHValue : Number(num) }))
         }else{
-            dispatch(setDuration({taskId :task.id,newDurationValue : num }))
+            dispatch(setDuration({taskId :task.id,newDurationValue : Number(num) }))
         }
         setWritemode(false)
     }

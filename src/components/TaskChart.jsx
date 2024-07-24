@@ -141,7 +141,7 @@ function TaskChart() {
       }
     })
     setFilteredListLinks(lists);
-  }, [listLinks, taskCoordinates, expandLines])
+  }, [listLinks, taskCoordinates, expandLines,taskData])
   return (
     <>
       <div className="z-50 w-full h-full relative flex flex-col flex-nowrap ">
